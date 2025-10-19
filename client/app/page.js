@@ -73,26 +73,28 @@ export default function Home() {
       </section>
 
       {/* Call-to-Action Section */}
-      <div className="bg-cyan-400 text-pink-700">
-        <section className="max-w-7xl mx-auto py-20 px-6 md:px-20 flex flex-col md:flex-row items-center justify-between">
-          <div className="md:w-2/3 space-y-4">
-            <h2 className="text-3xl md:text-4xl font-bold">
-              Ready to simplify hostel management?
-            </h2>
-            <p className="text-lg">
-              Login now and start managing student accommodations efficiently and
-              professionally.
-            </p>
-          </div>
-          <div className="md:w-1/3 mt-6 md:mt-0 flex justify-center md:justify-end">
-            <Link
-              href="/getstarted"
-              className="bg-pink-600 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:bg-pink-700 transition duration-300"
-            >
-              Get Started
-            </Link>
-          </div>
-        </section>
+      <div className="bg-pink-100">
+        <div className="bg-cyan-400 rounded-t-4xl text-pink-700">
+          <section className="max-w-7xl mx-auto py-20 px-6 md:px-20 flex flex-col md:flex-row items-center justify-between">
+            <div className="md:w-2/3 space-y-4">
+              <h2 className="text-3xl md:text-4xl font-bold">
+                Ready to simplify hostel management?
+              </h2>
+              <p className="text-lg">
+                Login now and start managing student accommodations efficiently and
+                professionally.
+              </p>
+            </div>
+            <div className="md:w-1/3 mt-6 md:mt-0 flex justify-center md:justify-end">
+              <Link
+                href="/getstarted"
+                className="bg-pink-600 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:bg-pink-700 transition duration-300"
+              >
+                Get Started
+              </Link>
+            </div>
+          </section>
+        </div>
       </div>
     </div>
   );
