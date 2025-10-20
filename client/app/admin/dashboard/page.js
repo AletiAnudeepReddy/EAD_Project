@@ -28,10 +28,12 @@ export default function AdminDashboard() {
         <div className="p-6 md:p-2 min-h-screen text-gray-900">
             {/* Header */}
             <div className="mb-8">
-                <h1 className="text-3xl font-bold text-pink-600">
+                <h1 data-aos="zoom-out"
+                data-aos-delay="200" className="text-3xl font-bold text-pink-600">
                     HostelHub <span className="bg-gradient-to-r from-pink-600 to-cyan-500 bg-clip-text text-transparent">Admin Dashboard</span>
                 </h1>
-                <p className="text-gray-600 mt-1">
+                <p data-aos="zoom-up"
+                data-aos-delay="100" className="text-gray-600 mt-1">
                     Overview of student allocations, room statistics, and activity.
                 </p>
             </div>
@@ -63,7 +65,8 @@ export default function AdminDashboard() {
             {/* Charts + Activity Section */}
             <div className="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Chart Section */}
-                <div className="bg-white rounded-2xl shadow-lg p-6">
+                <div data-aos="zoom-in"
+                data-aos-delay="200" className="bg-white rounded-2xl shadow-lg p-6">
                     <h2 className="text-xl font-bold text-pink-600 mb-4">
                         Allocation Trends
                     </h2>
@@ -79,7 +82,8 @@ export default function AdminDashboard() {
                 </div>
 
                 {/* Recent Activity */}
-                <div className="bg-white rounded-2xl shadow-lg p-6">
+                <div data-aos="zoom-in"
+                data-aos-delay="200" className="bg-white rounded-2xl shadow-lg p-6">
                     <h2 className="text-xl font-bold text-pink-600 mb-4">
                         Recent Allocation Activity
                     </h2>
@@ -114,7 +118,8 @@ export default function AdminDashboard() {
 
 function StatCard({ icon, title, value }) {
     return (
-        <div className="bg-gray-50 rounded-2xl shadow-md p-6 flex items-center space-x-4 hover:shadow-xl transition-shadow duration-300">
+        <div data-aos="fade-up"
+                data-aos-delay="200" className="bg-gray-50 rounded-2xl shadow-md p-6 flex items-center space-x-4 hover:shadow-xl transition-shadow duration-300">
             <div className="p-3 bg-cyan-100 rounded-full">{icon}</div>
             <div>
                 <h3 className="text-gray-600 font-semibold">{title}</h3>

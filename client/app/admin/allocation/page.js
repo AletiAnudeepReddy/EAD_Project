@@ -72,13 +72,15 @@ export default function AllocationPage() {
         <div className="p-6 md:p-2 min-h-screen">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-cyan-500 bg-clip-text text-transparent">
+                <h1  data-aos="zoom-out"
+                data-aos-delay="100" className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-cyan-500 bg-clip-text text-transparent">
                     Room Allocation
                 </h1>
             </div>
 
             {/* Allocation Form */}
-            <div className="bg-white rounded-xl border-2 border-dashed border-pink-200 p-6 mb-8">
+            <div data-aos="zoom-in"
+                data-aos-delay="200" className="bg-white rounded-xl border-2 border-dashed border-pink-200 p-6 mb-8">
                 <h2 className="text-xl font-semibold mb-4 text-gray-700">
                     Allocate a Room
                 </h2>

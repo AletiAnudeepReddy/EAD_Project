@@ -37,12 +37,14 @@ export default function RoomsPage() {
         <div className="p-6 md:p-2 min-h-screen">
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-cyan-500 bg-clip-text text-transparent">
+                <h1 data-aos="zoom-out"
+                    data-aos-delay="100" className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-cyan-500 bg-clip-text text-transparent">
                     Manage Rooms
                 </h1>
 
                 <div className="flex flex-wrap items-center gap-3 mt-3 md:mt-0">
-                    <div className="relative">
+                    <div data-aos="fade-left"
+                        data-aos-delay="200" className="relative">
                         <Search className="absolute left-3 top-2.5 text-gray-400 w-5 h-5" />
                         <input
                             type="text"
@@ -53,7 +55,8 @@ export default function RoomsPage() {
                         />
                     </div>
 
-                    <select
+                    <select data-aos="fade-left"
+                        data-aos-delay="300"
                         className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-cyan-400 outline-none"
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
@@ -63,7 +66,8 @@ export default function RoomsPage() {
                         <option value="Filled">Filled</option>
                     </select>
 
-                    <button
+                    <button data-aos="fade-left"
+                        data-aos-delay="400"
                         onClick={() => setIsFormOpen(true)}
                         className="flex items-center gap-2 bg-gradient-to-r from-pink-500 to-cyan-400 text-white font-semibold px-5 py-2 rounded-full shadow-lg hover:opacity-90 transition"
                     >
@@ -75,7 +79,8 @@ export default function RoomsPage() {
             {/* Table */}
             <div className="overflow-x-auto bg-white rounded-xl shadow-md">
                 <table className="min-w-full divide-y divide-gray-200">
-                    <thead className="bg-pink-100 text-pink-800">
+                    <thead data-aos="fade-up"
+                        data-aos-delay="100" className="bg-pink-100 text-pink-800">
                         <tr>
                             <th className="px-6 py-3 text-left text-sm font-semibold">Room No</th>
                             <th className="px-6 py-3 text-left text-sm font-semibold">Hostel Name</th>
@@ -88,7 +93,8 @@ export default function RoomsPage() {
 
                     <tbody className="divide-y divide-gray-100">
                         {filteredRooms.map((room, index) => (
-                            <tr key={index} className="hover:bg-gray-50 transition">
+                            <tr data-aos="fade-up"
+                                data-aos-delay="200" key={index} className="hover:bg-gray-50 transition">
                                 <td className="px-6 py-4">{room.roomNumber}</td>
                                 <td className="px-6 py-4">{room.hostelName}</td>
                                 <td className="px-6 py-4">{room.capacity}</td>

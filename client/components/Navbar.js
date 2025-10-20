@@ -26,6 +26,8 @@ export default function AdminNavbar() {
     return (
         <>
             <nav
+                data-aos="zoom-out"
+                data-aos-delay="00"
                 className={`fixed w-full z-50 shadow-xl transition-all duration-300 ${isAdminPage
                     ? "bg-gradient-to-r from-pink-600 to-cyan-500"
                     : "bg-pink-600"
@@ -36,7 +38,11 @@ export default function AdminNavbar() {
                         } mx-auto px-6 lg:px-8`}
                 >
                     <div className="flex justify-between h-16 items-center">
-                        <Link href="/">
+                        <Link
+                            data-aos="fade-right"
+                            data-aos-delay="200"
+                            href="/">
+
                             {/* Left Side: Logo / App Name */}
                             <div className="flex items-center space-x-3">
 
@@ -49,7 +55,9 @@ export default function AdminNavbar() {
                         </Link>
 
                         {/* Desktop Menu */}
-                        <div className="hidden md:flex items-center">
+                        <div className="hidden md:flex items-center"
+                            data-aos="fade-left"
+                            data-aos-delay="200">
                             {!isAdminPage ? (
                                 <button
                                     onClick={() => setIsAuthOpen(true)}

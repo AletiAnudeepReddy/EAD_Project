@@ -56,10 +56,12 @@ export default function StudentsPage() {
         <div className="p-2 min-h-screen">
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-cyan-500 bg-clip-text text-transparent">Manage Students</h1>
+                <h1 data-aos="zoom-out"
+                    data-aos-delay="100" className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-cyan-500 bg-clip-text text-transparent">Manage Students</h1>
 
                 <div className="flex items-center gap-3">
-                    <div className="relative">
+                    <div data-aos="fade-left"
+                        data-aos-delay="100" className="relative">
                         <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
                         <input
                             type="text"
@@ -70,7 +72,8 @@ export default function StudentsPage() {
                         />
                     </div>
 
-                    <button
+                    <button data-aos="fade-left"
+                        data-aos-delay="200"
                         onClick={() => {
                             setEditStudent(null);
                             setIsModalOpen(true);
@@ -85,7 +88,8 @@ export default function StudentsPage() {
             {/* Table */}
             <div className="overflow-x-auto bg-white rounded-xl shadow-lg">
                 <table className="min-w-full text-sm text-left border-collapse">
-                    <thead>
+                    <thead data-aos="fade-up"
+                        data-aos-delay="100">
                         <tr className="bg-pink-100 text-pink-800">
                             <th className="py-3 px-4">Name</th>
                             <th className="py-3 px-4">Roll No</th>
@@ -99,7 +103,8 @@ export default function StudentsPage() {
                     <tbody>
                         {filteredStudents.length > 0 ? (
                             filteredStudents.map((student, idx) => (
-                                <tr
+                                <tr data-aos="fade-up"
+                                    data-aos-delay="200"
                                     key={idx}
                                     className="border-b hover:bg-pink-50 transition duration-150"
                                 >

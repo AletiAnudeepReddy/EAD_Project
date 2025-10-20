@@ -13,19 +13,23 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
-      <div className="bg-pink-600">
+      <div data-aos="fade-down"
+        data-aos-delay="100" className="bg-pink-600">
         <section className="flex flex-col md:flex-row items-end justify-between text-white px-6 md:px-12 pt-30 md:pt-20 pb-0 max-w-7xl mx-auto">
           {/* Left Side: Text */}
           <div className="md:w-1/2 space-y-6 md:mb-20">
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+            <h1 data-aos="fade-up"
+              data-aos-delay="300" className="text-4xl md:text-5xl font-extrabold tracking-tight">
               Welcome to <span className="text-cyan-400">HostelHub</span>
             </h1>
-            <p className="text-lg md:text-xl py-1 text-white/90">
+            <p data-aos="fade-up"
+              data-aos-delay="400" className="text-lg md:text-xl py-1 text-white/90">
               A professional Hostel Room Allocation System designed to make
               managing hostels easy, efficient, and error-free. Say goodbye to
               double-bookings and manual paperwork.
             </p>
-            <button
+            <button data-aos="fade-up"
+              data-aos-delay="500"
               onClick={() => setIsAuthOpen(true)}
               className="inline-block bg-cyan-400 text-pink-700 font-semibold px-6 py-2.5 rounded-full shadow-lg hover:bg-cyan-300 transition duration-300"
             >
@@ -34,7 +38,8 @@ export default function Home() {
           </div>
 
           {/* Right Side: Illustration */}
-          <div className="md:w-1/2 flex justify-center md:justify-end mt-10 md:mt-0">
+          <div data-aos="fade-up"
+            data-aos-delay="400" className="md:w-1/2 flex justify-center md:justify-end mt-10 md:mt-0">
             <img
               src="./hostel.png"
               alt="hostel"
@@ -46,11 +51,13 @@ export default function Home() {
 
       {/* Features Section */}
       <section className="bg-pink-100 py-20 px-6 md:px-20">
-        <h2 className="text-3xl font-bold text-center text-gray-600 mb-12">
+        <h2 data-aos="fade-down"
+          data-aos-delay="100" className="text-3xl font-bold text-center text-gray-600 mb-12">
           Why Choose HostelHub?
         </h2>
         <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
-          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 text-center">
+          <div data-aos="fade-right"
+            data-aos-delay="200" className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 text-center">
             <h3 className="text-xl font-semibold text-pink-600 mb-3">
               Error-Free Allocation
             </h3>
@@ -59,7 +66,8 @@ export default function Home() {
               management of student assignments.
             </p>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 text-center">
+          <div data-aos="zoom-in"
+            data-aos-delay="200" className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 text-center">
             <h3 className="text-xl font-semibold text-pink-600 mb-3">
               Real-Time Vacancy
             </h3>
@@ -68,7 +76,8 @@ export default function Home() {
               generate reports anytime.
             </p>
           </div>
-          <div className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 text-center">
+          <div data-aos="fade-left"
+            data-aos-delay="200" className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition duration-300 text-center">
             <h3 className="text-xl font-semibold text-pink-600 mb-3">
               Admin Dashboard
             </h3>
@@ -82,10 +91,12 @@ export default function Home() {
 
       {/* Call-to-Action Section */}
       <div className="bg-pink-100">
-        <div className="bg-cyan-400 rounded-t-4xl text-pink-700">
+        <div data-aos="fade-up"
+          data-aos-delay="00" className="bg-cyan-400 rounded-t-4xl text-pink-700">
           <section className="max-w-7xl mx-auto py-20 px-6 md:px-20 flex flex-col md:flex-row items-center justify-between">
             <div className="md:w-2/3 space-y-4">
-              <h2 className="text-3xl md:text-4xl font-bold">
+              <h2 data-aos="fade-right"
+                data-aos-delay="200" className="text-3xl md:text-4xl font-bold">
                 Ready to simplify hostel management?
               </h2>
               <p className="text-lg">
@@ -94,7 +105,8 @@ export default function Home() {
               </p>
             </div>
             <div className="md:w-1/3 mt-6 md:mt-0 flex justify-center md:justify-end">
-              <button
+              <button data-aos="fade-left"
+                data-aos-delay="200"
                 onClick={() => setIsAuthOpen(true)}
                 className="bg-pink-600 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:bg-pink-700 transition duration-300"
               >

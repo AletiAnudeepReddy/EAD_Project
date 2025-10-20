@@ -75,7 +75,8 @@ export default function ReportsPage() {
         <div className="p-6 md:p-2 min-h-screen">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-cyan-500 bg-clip-text text-transparent">
+                <h1 data-aos="zoom-out"
+                    data-aos-delay="100" className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-cyan-500 bg-clip-text text-transparent">
                     Reports & Analytics
                 </h1>
             </div>
@@ -83,7 +84,8 @@ export default function ReportsPage() {
             {/* Analytics Section */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
                 {/* Bar Chart */}
-                <div className="bg-gray-50 rounded-2xl border-2 border-dashed border-pink-200 p-6">
+                <div data-aos="zoom-in"
+                    data-aos-delay="100" className="bg-gray-50 rounded-2xl border-2 border-dashed border-pink-200 p-6">
                     <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2">
                         <BarChart3 className="text-pink-500" /> Students by Department
                     </h2>
@@ -99,7 +101,8 @@ export default function ReportsPage() {
                 </div>
 
                 {/* Pie Chart */}
-                <div className="bg-gray-50 rounded-2xl border-2 border-dashed border-pink-200 p-6">
+                <div data-aos="zoom-in"
+                    data-aos-delay="100" className="bg-gray-50 rounded-2xl border-2 border-dashed border-pink-200 p-6">
                     <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-2">
                         <PieChart className="text-cyan-500" /> Room Status Distribution
                     </h2>
@@ -127,23 +130,27 @@ export default function ReportsPage() {
 
             {/* Download Reports Section */}
             <div className="bg-white rounded-2xl shadow-lg p-6">
-                <h2 className="text-lg font-semibold text-gray-700 mb-4">
+                <h2 data-aos="fade-down"
+                    data-aos-delay="100" className="text-lg font-semibold text-gray-700 mb-4">
                     Download Reports
                 </h2>
                 <div className="flex flex-wrap gap-4">
-                    <button
+                    <button data-aos="fade-up"
+                        data-aos-delay="100"
                         onClick={() => handleDownloadReport("students")}
                         className="flex items-center gap-2 bg-gradient-to-r from-pink-500 to-cyan-400 text-white px-5 py-2 rounded-full font-semibold shadow-md hover:opacity-90 transition"
                     >
                         <FileDown size={18} /> Students Report
                     </button>
-                    <button
+                    <button data-aos="fade-up"
+                        data-aos-delay="200"
                         onClick={() => handleDownloadReport("rooms")}
                         className="flex items-center gap-2 bg-gradient-to-r from-pink-500 to-cyan-400 text-white px-5 py-2 rounded-full font-semibold shadow-md hover:opacity-90 transition"
                     >
                         <FileDown size={18} /> Rooms Report
                     </button>
-                    <button
+                    <button data-aos="fade-up"
+                        data-aos-delay="300"
                         onClick={() => handleDownloadReport("allocations")}
                         className="flex items-center gap-2 bg-gradient-to-r from-pink-500 to-cyan-400 text-white px-5 py-2 rounded-full font-semibold shadow-md hover:opacity-90 transition"
                     >

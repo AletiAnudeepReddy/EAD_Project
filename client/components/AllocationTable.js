@@ -3,7 +3,8 @@
 export default function AllocationTable({ allocations }) {
     return (
         <div className="bg-gray-50 rounded-xl shadow-sm p-5">
-            <h2 className="text-xl font-semibold mb-4 text-gray-700">
+            <h2 data-aos="fade-down"
+                data-aos-delay="100" className="text-xl font-semibold mb-4 text-gray-700">
                 Current Allocations
             </h2>
 
@@ -14,7 +15,8 @@ export default function AllocationTable({ allocations }) {
             ) : (
                 <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-pink-100 text-pink-800 ">
+                        <thead data-aos="fade-up"
+                            data-aos-delay="100" className="bg-pink-100 text-pink-800 ">
                             <tr>
                                 <th className="px-6 py-3 text-left text-sm font-semibold">
                                     Student Name
@@ -29,7 +31,8 @@ export default function AllocationTable({ allocations }) {
                         </thead>
                         <tbody className="divide-y divide-gray-100">
                             {allocations.map((a, i) => (
-                                <tr key={i} className="hover:bg-gray-50 transition">
+                                <tr data-aos="fade-up"
+                                    data-aos-delay="200" key={i} className="hover:bg-gray-50 transition">
                                     <td className="px-6 py-4">{a.student}</td>
                                     <td className="px-6 py-4">{a.roomNumber}</td>
                                     <td className="px-6 py-4">{a.hostel}</td>

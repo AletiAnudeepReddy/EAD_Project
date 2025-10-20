@@ -27,7 +27,8 @@ export default function StudentForm({ setIsOpen, onSave, initialData }) {
 
     return (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 relative animate-fadeIn">
+            <div data-aos="zoom-in"
+                data-aos-delay="100" className="bg-white rounded-2xl shadow-2xl w-full max-w-lg p-6 relative animate-fadeIn">
                 {/* Close Button */}
                 <button
                     onClick={() => setIsOpen(false)}

@@ -25,7 +25,8 @@ export default function RoomForm({ isOpen, setIsOpen, setRooms }) {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 bg-opacity-40 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
+            <div data-aos="zoom-in"
+                data-aos-delay="100" className="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
                 <button
                     onClick={() => setIsOpen(false)}
                     className="absolute top-3 right-3 text-gray-500 hover:text-gray-800"
