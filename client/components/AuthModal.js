@@ -8,6 +8,9 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { toast, ToastContainer, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useSession } from 'next-auth/react';
+import { useEffect } from 'react';
+
 
 export default function AuthModal({ isOpen, setIsOpen }) {
     const router = useRouter();
@@ -17,6 +20,8 @@ export default function AuthModal({ isOpen, setIsOpen }) {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [googleLoading, setGoogleLoading] = useState(false);
+
+
 
     const toggleMode = () => {
         setTimeout(() => {
@@ -91,19 +96,24 @@ export default function AuthModal({ isOpen, setIsOpen }) {
     };
 
     // ✅ Google sign-in integration
+
     const handleGoogleSignIn = async () => {
         setGoogleLoading(true);
         try {
-            await signIn('google', {
-                callbackUrl: 'admin/dashboard',
-                prompt: 'consent select_account',
+            // Let NextAuth handle full redirect flow
+            await signIn("google", {
+                callbackUrl: `${window.location.origin}/admin/dashboard`,
+                prompt: "consent select_account",
             });
+            // 👆 After successful Google login, NextAuth will redirect automatically
+            // to /admin/dashboard (no manual router.push needed)
         } catch (err) {
-            console.error(err);
-            notify('Google sign-in failed.', 'error');
+            console.error("Google sign-in error:", err);
+            notify("Google sign-in failed.", "error");
             setGoogleLoading(false);
         }
     };
+
 
     return (
         <>

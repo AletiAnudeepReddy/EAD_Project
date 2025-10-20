@@ -13,11 +13,13 @@ import {
 } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSession, signOut } from "next-auth/react";
 
 export default function AdminLayout({ children }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const router = useRouter();
     const pathname = usePathname();
+    const { data: session } = useSession();
 
     const menuItems = [
         { name: "Dashboard", icon: Home, path: "/admin/dashboard" },
@@ -27,8 +29,9 @@ export default function AdminLayout({ children }) {
         { name: "Reports", icon: BarChart3, path: "/admin/reports" },
     ];
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
         localStorage.removeItem("adminLoggedIn");
+        await signOut({ redirect: false });
         router.push("/");
     };
 

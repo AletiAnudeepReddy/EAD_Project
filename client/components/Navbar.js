@@ -4,11 +4,13 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Menu, X, Home, User } from "lucide-react";
 import AuthModal from "@/components/AuthModal";
+import { useSession } from 'next-auth/react';
 
 export default function AdminNavbar() {
     const [isOpen, setIsOpen] = useState(false); // mobile menu
     const [isAuthOpen, setIsAuthOpen] = useState(false);// default admin name
     const pathname = usePathname();
+    const { data: session } = useSession();
     return (
         <>
             <nav
@@ -41,12 +43,15 @@ export default function AdminNavbar() {
                             data-aos="fade-left"
                             data-aos-delay="200">
 
-                            <button
+                            {!session ? (<button
                                 onClick={() => setIsAuthOpen(true)}
                                 className="bg-white text-pink-600 font-semibold px-6 py-2 rounded-full shadow-lg hover:bg-pink-50 transition duration-300"
                             >
                                 Get Started
-                            </button>
+                            </button>) :
+                                (<Link href="/admin/dashboard" className="bg-white text-pink-600 font-semibold px-6 py-2 rounded-full shadow-lg hover:bg-pink-50 transition duration-300"
+                                >Dashboard
+                                </Link>)}
                         </div>
                         {/* Mobile Menu Button */}
                         <div className="md:hidden flex items-center">
@@ -65,7 +70,7 @@ export default function AdminNavbar() {
                 {isOpen && (
                     <div className="md:hidden shadow-lg border-t border-pink-300 bg-opacity-95 transition">
                         <div className="flex flex-col items-center py-4 space-y-3">
-                            <button
+                            {!session ? (<button
                                 onClick={() => {
                                     setIsAuthOpen(true);
                                     setIsOpen(false);
@@ -73,7 +78,10 @@ export default function AdminNavbar() {
                                 className="bg-white text-pink-600 font-semibold px-6 py-2 rounded-full shadow-lg hover:bg-pink-50 transition duration-300"
                             >
                                 Get Started
-                            </button>
+                            </button>) : (<Link href="/admin/dashboard" className="bg-white text-pink-600 font-semibold px-6 py-2 rounded-full shadow-lg hover:bg-pink-50 transition duration-300"
+                            >
+                                Dashboard
+                            </Link>)}
 
                         </div>
                     </div>
