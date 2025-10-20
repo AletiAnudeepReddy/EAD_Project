@@ -1,12 +1,22 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, Home, Users, BedDouble, ClipboardList, BarChart3, LogOut } from "lucide-react";
-import { useRouter } from "next/navigation";
+import {
+    Menu,
+    X,
+    Home,
+    Users,
+    BedDouble,
+    ClipboardList,
+    BarChart3,
+    LogOut,
+} from "lucide-react";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function AdminLayout({ children }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const router = useRouter();
+    const pathname = usePathname();
 
     const menuItems = [
         { name: "Dashboard", icon: Home, path: "/admin/dashboard" },
@@ -34,7 +44,9 @@ export default function AdminLayout({ children }) {
                         <div className="flex items-center gap-2">
                             <Home className="text-pink-600 w-7 h-7" />
                             {isSidebarOpen && (
-                                <span className="text-xl font-bold text-pink-600">HostelHub</span>
+                                <span className="text-xl font-bold text-pink-600">
+                                    HostelHub
+                                </span>
                             )}
                         </div>
                         <button
@@ -47,16 +59,23 @@ export default function AdminLayout({ children }) {
 
                     {/* Menu Items */}
                     <nav className="mt-6 flex flex-col gap-2 px-3">
-                        {menuItems.map((item) => (
-                            <Link
-                                key={item.name}
-                                href={item.path}
-                                className="flex items-center gap-3 px-4 py-3 text-gray-700 font-medium rounded-xl hover:bg-gradient-to-r hover:from-pink-100 hover:to-cyan-100 hover:text-pink-600 transition-all"
-                            >
-                                <item.icon className="w-5 h-5 text-pink-600" />
-                                {isSidebarOpen && <span>{item.name}</span>}
-                            </Link>
-                        ))}
+                        {menuItems.map((item) => {
+                            const Icon = item.icon;
+                            const active = pathname === item.path;
+                            return (
+                                <Link
+                                    key={item.name}
+                                    href={item.path}
+                                    className={`flex items-center gap-3 px-4 py-3 font-medium rounded-xl transition-all ${active
+                                        ? "bg-gradient-to-r from-pink-500 to-cyan-400 text-white shadow-md"
+                                        : "text-gray-700 hover:bg-gradient-to-r hover:from-pink-100 hover:to-cyan-100 hover:text-pink-600"
+                                        }`}
+                                >
+                                    <Icon className="w-5 h-5" />
+                                    {isSidebarOpen && <span>{item.name}</span>}
+                                </Link>
+                            );
+                        })}
                     </nav>
                 </div>
 
@@ -75,11 +94,11 @@ export default function AdminLayout({ children }) {
             {/* Main Content Area */}
             <main
                 className={`flex-1 transition-all duration-300 ${isSidebarOpen ? "ml-64" : "ml-20"
-                    } p-8 pt-20`}
+                    } p-8 pt-17`}
             >
                 {/* Header */}
-                <div className="mb-8 bg-white/60 backdrop-blur-md border border-pink-100 rounded-2xl p-4 shadow-sm flex justify-between items-center">
-                    <h1 className="text-2xl font-bold text-pink-600">Admin Dashboard</h1>
+                <div className="mb-6 border-b-3 border-dashed border-pink-200 p-2 flex justify-between items-center">
+                    <h1 className="text-2xl font-bold text-pink-600">Admin Panel</h1>
                     <p className="text-gray-600 text-sm">Welcome back, Admin 👋</p>
                 </div>
 

@@ -25,11 +25,11 @@ export default function AdminDashboard() {
     ];
 
     return (
-        <div className="p-6 md:p-8 bg-gray-50 min-h-screen text-gray-900">
+        <div className="p-6 md:p-2 min-h-screen text-gray-900">
             {/* Header */}
-            <div className="mb-8 mt-15">
-                <h1 className="text-3xl font-extrabold text-pink-600 tracking-tight">
-                    HostelHub Admin Dashboard
+            <div className="mb-8">
+                <h1 className="text-3xl font-bold text-pink-600">
+                    HostelHub <span className="bg-gradient-to-r from-pink-600 to-cyan-500 bg-clip-text text-transparent">Admin Dashboard</span>
                 </h1>
                 <p className="text-gray-600 mt-1">
                     Overview of student allocations, room statistics, and activity.
@@ -114,11 +114,11 @@ export default function AdminDashboard() {
 
 function StatCard({ icon, title, value }) {
     return (
-        <div className="bg-white rounded-2xl shadow-md p-6 flex items-center space-x-4 hover:shadow-xl transition-shadow duration-300">
-            <div className="p-3 bg-pink-100 rounded-full">{icon}</div>
+        <div className="bg-gray-50 rounded-2xl shadow-md p-6 flex items-center space-x-4 hover:shadow-xl transition-shadow duration-300">
+            <div className="p-3 bg-cyan-100 rounded-full">{icon}</div>
             <div>
                 <h3 className="text-gray-600 font-semibold">{title}</h3>
-                <p className="text-2xl font-bold text-gray-900">{value}</p>
+                <p className="text-2xl font-bold text-gray-700">{value}</p>
             </div>
         </div>
     );
