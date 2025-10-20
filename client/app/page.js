@@ -1,7 +1,15 @@
 "use client";
 import Link from "next/link";
+import AuthModal from "@/components/AuthModal";
+
+import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 export default function Home() {
+  const [isOpen, setIsOpen] = useState(false); // mobile menu
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const pathname = usePathname();
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Hero Section */}
@@ -17,12 +25,12 @@ export default function Home() {
               managing hostels easy, efficient, and error-free. Say goodbye to
               double-bookings and manual paperwork.
             </p>
-            <Link
-              href="/getstarted"
+            <button
+              onClick={() => setIsAuthOpen(true)}
               className="inline-block bg-cyan-400 text-pink-700 font-semibold px-6 py-2.5 rounded-full shadow-lg hover:bg-cyan-300 transition duration-300"
             >
               Get Started
-            </Link>
+            </button>
           </div>
 
           {/* Right Side: Illustration */}
@@ -86,16 +94,17 @@ export default function Home() {
               </p>
             </div>
             <div className="md:w-1/3 mt-6 md:mt-0 flex justify-center md:justify-end">
-              <Link
-                href="/getstarted"
+              <button
+                onClick={() => setIsAuthOpen(true)}
                 className="bg-pink-600 text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:bg-pink-700 transition duration-300"
               >
                 Get Started
-              </Link>
+              </button>
             </div>
           </section>
         </div>
       </div>
+      <AuthModal isOpen={isAuthOpen} setIsOpen={setIsAuthOpen} />
     </div>
   );
 }
