@@ -34,8 +34,10 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {pathname == "/" && <AdminNavbar />}
-        {children}
+        <SessionProvider>
+          {pathname == "/" && <AdminNavbar />}
+          {children}
+        </SessionProvider>
       </body>
     </html>
   );

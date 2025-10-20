@@ -4,10 +4,13 @@ import { Fragment, useState } from 'react';
 import { IoClose, IoMailOutline, IoLockClosedOutline, IoPersonOutline } from 'react-icons/io5';
 import { FcGoogle } from 'react-icons/fc';
 import { motion, AnimatePresence } from 'framer-motion';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import { toast, ToastContainer, Bounce } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function AuthModal({ isOpen, setIsOpen }) {
+    const router = useRouter();
     const [isLogin, setIsLogin] = useState(true);
     const [fullname, setFullname] = useState('');
     const [email, setEmail] = useState('');
@@ -34,28 +37,70 @@ export default function AuthModal({ isOpen, setIsOpen }) {
         });
     };
 
-    const handleSubmit = (e) => {
+    // ✅ handle login/signup integration
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setTimeout(() => {
-            notify(isLogin ? 'Login successful (demo)!' : 'Account created (demo)!', 'success');
+
+        try {
+            const endpoint = isLogin ? '/api/login' : '/api/signup';
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ fullname, email, password }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                notify(data.message || 'Something went wrong', 'error');
+                setLoading(false);
+                return;
+            }
+
+            notify(data.message, 'success');
+
+            // ✅ if login: use next-auth to sign in
+            if (isLogin) {
+                const loginRes = await signIn('credentials', {
+                    redirect: false,
+                    email,
+                    password,
+                });
+
+                if (loginRes?.ok) {
+                    router.push('admin/dashboard'); // redirect after login
+                    setIsOpen(false);
+                } else {
+                    notify('Invalid credentials', 'error');
+                }
+            } else {
+                // after signup, switch to login form
+                setIsLogin(true);
+            }
+
+            setFullname('');
+            setEmail('');
+            setPassword('');
+        } catch (err) {
+            console.error(err);
+            notify('Error occurred. Try again.', 'error');
+        } finally {
             setLoading(false);
-            setIsOpen(false);
-        }, 1200);
+        }
     };
 
-    // Frontend-only placeholder for Google sign-in.
-    // Replace this with real next-auth / OAuth logic later.
+    // ✅ Google sign-in integration
     const handleGoogleSignIn = async () => {
         setGoogleLoading(true);
         try {
-            // simulate network / popup
-            await new Promise((res) => setTimeout(res, 1400));
-            notify('Google sign-in (demo) successful!', 'success');
-            setIsOpen(false);
+            await signIn('google', {
+                callbackUrl: 'admin/dashboard',
+                prompt: 'consent select_account',
+            });
         } catch (err) {
-            notify('Google sign-in failed (demo).', 'error');
-        } finally {
+            console.error(err);
+            notify('Google sign-in failed.', 'error');
             setGoogleLoading(false);
         }
     };
@@ -164,7 +209,7 @@ export default function AuthModal({ isOpen, setIsOpen }) {
                                         <span className="h-[1.5px] w-16 bg-gray-300" />
                                     </div>
 
-                                    {/* Continue with Google (frontend-only placeholder) */}
+                                    {/* Continue with Google */}
                                     <button
                                         onClick={handleGoogleSignIn}
                                         disabled={googleLoading}
@@ -189,10 +234,7 @@ export default function AuthModal({ isOpen, setIsOpen }) {
                                     {/* Switch Mode */}
                                     <p className="mt-6 text-sm text-center text-gray-600">
                                         {isLogin ? "Don't have an account?" : 'Already have an account?'}{' '}
-                                        <button
-                                            onClick={toggleMode}
-                                            className="text-pink-600 font-semibold hover:underline"
-                                        >
+                                        <button onClick={toggleMode} className="text-pink-600 font-semibold hover:underline">
                                             {isLogin ? 'Sign Up' : 'Login'}
                                         </button>
                                     </p>
