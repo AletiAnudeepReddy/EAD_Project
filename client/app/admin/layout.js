@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
     Menu,
@@ -12,14 +12,39 @@ import {
     LogOut,
 } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import { useSession, signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
+/**
+ * AdminLayout
+ * - Desktop: left sidebar (unchanged)
+ * - Mobile: sidebar hidden, bottom icon-only navbar fixed bottom (md:hidden)
+ * - Small top-left menu button on mobile opens a slide-over menu if user wants more
+ */
 export default function AdminLayout({ children }) {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const router = useRouter();
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true); // affects desktop only
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // slide-over mobile menu
+    const [isMobile, setIsMobile] = useState(false);
     const pathname = usePathname();
+    const router = useRouter();
     const { data: session } = useSession();
+
+    useEffect(() => {
+        const handleResize = () => {
+            const mobile = window.innerWidth < 768;
+            setIsMobile(mobile);
+            if (mobile) {
+                // keep desktop sidebar collapsed on mobile
+                setIsSidebarOpen(false);
+            } else {
+                // restore default desktop state (open)
+                setIsSidebarOpen(true);
+                setIsMobileMenuOpen(false);
+            }
+        };
+        handleResize();
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     const menuItems = [
         { name: "Dashboard", icon: Home, path: "/admin/dashboard" },
@@ -37,79 +62,56 @@ export default function AdminLayout({ children }) {
 
     return (
         <div className="flex min-h-screen bg-gradient-to-br from-pink-100 via-white to-cyan-100">
-            {/* Sidebar */}
-            <motion.aside
-                initial={{ x: -100, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.8, ease: "easeInOut" }}
-                className={`${isSidebarOpen ? "w-64" : "w-20"
-                    } bg-white/80 backdrop-blur-md border-r border-pink-200 shadow-xl transition-all duration-500 fixed h-screen flex flex-col justify-between`}
+            {/* ---------- DESKTOP SIDEBAR (visible from md and up) ---------- */}
+            <aside
+                className={`hidden md:flex flex-col justify-between fixed h-screen transition-all duration-300 z-30
+          ${isSidebarOpen ? "w-64" : "w-20"}
+          bg-white/80 backdrop-blur-md border-r border-pink-200 shadow-xl`}
             >
                 <div>
-                    {/* Logo + Toggle */}
+                    {/* Logo + toggle */}
                     <div className="flex items-center justify-between p-5 border-b border-pink-100">
-                        <Link href="/">
-                            <div className="flex items-center gap-2">
-                                <Home className="text-pink-600 w-7 h-7" />
-                                <AnimatePresence>
-                                    {isSidebarOpen && (
-                                        <motion.span
-                                            key="logo-text"
-                                            initial={{ opacity: 0, x: -10 }}
-                                            animate={{ opacity: 1, x: 0 }}
-                                            exit={{ opacity: 0, x: -10 }}
-                                            transition={{ duration: 0.4, ease: "easeInOut" }}
-                                            className="text-xl font-bold text-pink-600"
-                                        >
-                                            HostelHub
-                                        </motion.span>
-                                    )}
-                                </AnimatePresence>
-                            </div>
+                        <Link href="/admin/dashboard" className="flex items-center gap-2">
+                            <Home className="text-pink-600 w-7 h-7" />
+                            {isSidebarOpen && (
+                                <span className="text-xl font-bold text-pink-600">HostelHub</span>
+                            )}
                         </Link>
+
                         <button
-                            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                            className="text-gray-500 hover:text-pink-600 transition"
+                            onClick={() => setIsSidebarOpen((s) => !s)}
+                            className="text-gray-500 hover:text-pink-600"
+                            aria-label="Toggle sidebar"
                         >
-                            {isSidebarOpen ? <X size={22} /> : <Menu size={22} />}
+                            {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
                         </button>
                     </div>
 
-                    {/* Menu Items */}
+                    {/* Nav links */}
                     <nav className="mt-6 flex flex-col gap-2 px-3">
-                        {menuItems.map((item, i) => {
+                        {menuItems.map((item) => {
                             const Icon = item.icon;
                             const active = pathname === item.path;
                             return (
-                                <motion.div
+                                <Link
                                     key={item.name}
-                                    initial={{ opacity: 0, y: 15 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: i * 0.1, duration: 0.5, ease: "easeInOut" }}
-                                >
-                                    <Link
-                                        href={item.path}
-                                        className={`flex items-center gap-3 px-4 py-3 font-medium rounded-xl transition-all ${active
+                                    href={item.path}
+                                    className={`flex items-center gap-3 px-4 py-3 font-medium rounded-xl transition-all
+                    ${active
                                             ? "bg-gradient-to-r from-pink-500 to-cyan-400 text-white shadow-md"
                                             : "text-gray-700 hover:bg-gradient-to-r hover:from-pink-100 hover:to-cyan-100 hover:text-pink-600"
-                                            }`}
-                                    >
-                                        <Icon className="w-5 h-5" />
-                                        {isSidebarOpen && <span>{item.name}</span>}
-                                    </Link>
-                                </motion.div>
+                                        }`}
+                                >
+                                    <Icon className="w-5 h-5" />
+                                    {isSidebarOpen && <span>{item.name}</span>}
+                                </Link>
                             );
                         })}
                     </nav>
                 </div>
 
-                {/* Logout Button */}
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, ease: "easeInOut" }}
-                    className="p-4 border-t border-pink-100"
-                >
+                {/* logout */}
+                <div className="p-4 border-t border-pink-100">
                     <button
                         onClick={handleLogout}
                         className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-pink-500 to-cyan-400 text-white py-2 rounded-xl font-semibold shadow-md hover:scale-[1.02] transition"
@@ -117,43 +119,124 @@ export default function AdminLayout({ children }) {
                         <LogOut size={18} />
                         {isSidebarOpen && "Logout"}
                     </button>
-                </motion.div>
-            </motion.aside>
+                </div>
+            </aside>
 
-            {/* Main Content */}
-            <motion.main
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8, ease: "easeInOut" }}
-                className={`flex-1 transition-all duration-500 ${isSidebarOpen ? "ml-64" : "ml-20"} p-8 pt-5`}
+            {/* ---------- MOBILE SLIDE-OVER SIDEBAR (only when isMobileMenuOpen) ---------- */}
+            {isMobile && isMobileMenuOpen && (
+                <div className="fixed inset-0 z-40">
+                    <div
+                        className="absolute inset-0 bg-black/40"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                    />
+                    <div className="absolute left-0 top-0 bottom-0 w-64 bg-white/95 backdrop-blur-md border-r border-pink-200 shadow-xl p-4 overflow-y-auto">
+                        <div className="flex items-center justify-between mb-4">
+                            <Link href="/admin/dashboard" className="flex items-center gap-2">
+                                <Home className="text-pink-600 w-7 h-7" />
+                                <span className="text-xl font-bold text-pink-600">HostelHub</span>
+                            </Link>
+                            <button onClick={() => setIsMobileMenuOpen(false)} aria-label="Close">
+                                <X size={22} />
+                            </button>
+                        </div>
+
+                        <nav className="flex flex-col gap-2">
+                            {menuItems.map((item) => {
+                                const Icon = item.icon;
+                                const active = pathname === item.path;
+                                return (
+                                    <Link
+                                        key={item.name}
+                                        href={item.path}
+                                        onClick={() => setIsMobileMenuOpen(false)}
+                                        className={`flex items-center gap-3 px-4 py-3 font-medium rounded-md transition-all
+                      ${active
+                                                ? "bg-gradient-to-r from-pink-500 to-cyan-400 text-white"
+                                                : "text-gray-700 hover:bg-pink-50 hover:text-pink-600"
+                                            }`}
+                                    >
+                                        <Icon className="w-5 h-5" />
+                                        <span>{item.name}</span>
+                                    </Link>
+                                );
+                            })}
+                        </nav>
+
+                        <div className="mt-6">
+                            <button
+                                onClick={() => {
+                                    setIsMobileMenuOpen(false);
+                                    handleLogout();
+                                }}
+                                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-pink-500 to-cyan-400 text-white py-2 rounded-xl"
+                            >
+                                <LogOut size={18} /> Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ---------- MAIN CONTENT AREA ---------- */}
+            <div
+                className={`flex-1 min-h-screen transition-all duration-300
+          ${/* desktop left margin when sidebar open */ ""}
+          md:pl-0`}
+            // We keep content full-width on mobile; desktop styles above keep a fixed sidebar.
             >
-                {/* Header */}
-                <motion.div
-                    initial={{ y: -25, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.6, ease: "easeInOut" }}
-                    className="mb-6 sticky top-0 z-100 backdrop-blur-3xl border-b-3 border-dashed border-pink-200 p-2 flex justify-between items-center"
-                >
-                    <h1 className="text-2xl font-bold text-pink-600">Admin Panel</h1>
-                    <p className="text-gray-600 text-sm">
-                        Welcome back,{" "}
-                        <span className="text-lg font-semibold bg-gradient-to-r from-pink-600 to-cyan-400 bg-clip-text text-transparent">
-                            Anudeep
-                        </span>{" "}
-                        👋
-                    </p>
-                </motion.div>
+                {/* ---------- TOP BAR ---------- */}
+                <header className="sticky top-0 ml-0 md:ml-64 z-20 bg-white/70 backdrop-blur-md border-b border-pink-200 p-3 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        {/* Mobile: show small menu button top-left to open slide-over */}
+                        <button
+                            onClick={() => setIsMobileMenuOpen(true)}
+                            className="md:hidden text-pink-600"
+                            aria-label="Open menu"
+                        >
+                            <Menu size={24} />
+                        </button>
 
-                {/* Content */}
-                <motion.div
-                    initial={{ scale: 0.96, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.6, ease: "easeInOut" }}
-                    className="bg-white/70 backdrop-blur-md border border-pink-100 rounded-2xl p-6 shadow-md"
-                >
-                    {children}
-                </motion.div>
-            </motion.main>
+                        {/* Title */}
+                        <h1 className="text-xl font-bold text-pink-600">Admin Panel</h1>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        <p className="text-gray-600 text-sm hidden sm:block">
+                            Welcome back,
+                            <span className="ml-2 font-semibold bg-gradient-to-r from-pink-600 to-cyan-400 bg-clip-text text-transparent">
+                                {session?.user?.name ?? "Anudeep"}
+                            </span>
+                        </p>
+                    </div>
+                </header>
+
+                {/* ---------- PAGE CONTENT ---------- */}
+                <main className={`p-6 md:pl-72` /* md:pl-72 creates space for desktop sidebar */}>
+                    <div className="bg-white/70 backdrop-blur-md border border-pink-100 rounded-2xl p-6 shadow-md">
+                        {children}
+                    </div>
+                </main>
+
+                {/* ---------- MOBILE BOTTOM NAV (icons only) ---------- */}
+                <nav className="fixed bottom-3 left-1/2 -translate-x-1/2 z-30 md:hidden">
+                    <div className="bg-white/95 backdrop-blur-md border border-gray-200 rounded-full shadow-lg px-3 py-2 flex items-center gap-2">
+                        {menuItems.map((item) => {
+                            const Icon = item.icon;
+                            const active = pathname === item.path;
+                            return (
+                                <Link
+                                    key={item.name}
+                                    href={item.path}
+                                    className={`p-3 rounded-full flex items-center justify-center transition
+                    ${active ? "bg-gradient-to-r from-pink-500 to-cyan-400 text-white" : "text-gray-600 hover:bg-pink-50"}`}
+                                >
+                                    <Icon className="w-5 h-5" />
+                                </Link>
+                            );
+                        })}
+                    </div>
+                </nav>
+            </div>
         </div>
     );
 }

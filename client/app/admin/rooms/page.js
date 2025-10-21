@@ -29,35 +29,43 @@ export default function RoomsPage() {
             room.roomNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
             room.hostelName.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesFilter =
-            filter === "All" ? true : room.status.toLowerCase() === filter.toLowerCase();
+            filter === "All"
+                ? true
+                : room.status.toLowerCase() === filter.toLowerCase();
         return matchesSearch && matchesFilter;
     });
 
     return (
-        <div className="p-6 md:p-2 min-h-screen">
+        <div className="sm:p-6 min-h-screen bg-gray-50">
             {/* Header Section */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-                <h1 data-aos="zoom-out"
-                    data-aos-delay="100" className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-cyan-500 bg-clip-text text-transparent">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+                <h1
+                    data-aos="zoom-out"
+                    data-aos-delay="100"
+                    className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-600 to-cyan-500 bg-clip-text text-transparent text-center md:text-left"
+                >
                     Manage Rooms
                 </h1>
 
-                <div className="flex flex-wrap items-center gap-3 mt-3 md:mt-0">
-                    <div data-aos="fade-left"
-                        data-aos-delay="200" className="relative">
-                        <Search className="absolute left-3 top-2.5 text-gray-400 w-5 h-5" />
+                <div className="w-full md:w-auto flex flex-col sm:flex-row items-stretch gap-3">
+                    {/* Search */}
+                    <div className="relative flex-1">
+                        <Search
+                            className="absolute left-3 top-3 text-gray-400"
+                            size={18}
+                        />
                         <input
                             type="text"
-                            placeholder="Search room..."
-                            className="pl-10 pr-4 py-2 rounded-lg border focus:ring-2 focus:ring-pink-400 outline-none"
+                            placeholder="Search room or hostel..."
+                            className="pl-10 pr-4 py-2 border rounded-full focus:ring-2 focus:ring-pink-400 outline-none w-full"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                         />
                     </div>
 
-                    <select data-aos="fade-left"
-                        data-aos-delay="300"
-                        className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-cyan-400 outline-none"
+                    {/* Filter */}
+                    <select
+                        className="border rounded-full px-4 py-2 focus:ring-2 focus:ring-cyan-400 outline-none w-full sm:w-auto"
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
                     >
@@ -66,58 +74,138 @@ export default function RoomsPage() {
                         <option value="Filled">Filled</option>
                     </select>
 
-                    <button data-aos="fade-left"
-                        data-aos-delay="400"
+                    {/* Add Button */}
+                    <button
                         onClick={() => setIsFormOpen(true)}
-                        className="flex items-center gap-2 bg-gradient-to-r from-pink-500 to-cyan-400 text-white font-semibold px-5 py-2 rounded-full shadow-lg hover:opacity-90 transition"
+                        className="flex items-center justify-center gap-2 bg-gradient-to-r from-pink-500 to-cyan-400 text-white font-semibold px-5 py-2 rounded-full shadow-md hover:scale-105 transition w-full sm:w-auto"
                     >
-                        <Plus size={20} /> Add Room
+                        <Plus size={16} /> Add Room
                     </button>
                 </div>
             </div>
 
-            {/* Table */}
-            <div className="overflow-x-auto bg-white rounded-xl shadow-md">
-                <table className="min-w-full divide-y divide-gray-200">
-                    <thead data-aos="fade-up"
-                        data-aos-delay="100" className="bg-pink-100 text-pink-800">
-                        <tr>
-                            <th className="px-6 py-3 text-left text-sm font-semibold">Room No</th>
-                            <th className="px-6 py-3 text-left text-sm font-semibold">Hostel Name</th>
-                            <th className="px-6 py-3 text-left text-sm font-semibold">Capacity</th>
-                            <th className="px-6 py-3 text-left text-sm font-semibold">Occupied</th>
-                            <th className="px-6 py-3 text-left text-sm font-semibold">Status</th>
-                            <th className="px-6 py-3 text-left text-sm font-semibold">Actions</th>
-                        </tr>
-                    </thead>
+            {/* ===== Mobile: Card List ===== */}
+            <div className="space-y-4 md:hidden">
+                {filteredRooms.length === 0 && (
+                    <div className="text-center text-gray-500 py-8">No rooms found.</div>
+                )}
 
-                    <tbody className="divide-y divide-gray-100">
-                        {filteredRooms.map((room, index) => (
-                            <tr data-aos="fade-up"
-                                data-aos-delay="200" key={index} className="hover:bg-gray-50 transition">
-                                <td className="px-6 py-4">{room.roomNumber}</td>
-                                <td className="px-6 py-4">{room.hostelName}</td>
-                                <td className="px-6 py-4">{room.capacity}</td>
-                                <td className="px-6 py-4">{room.currentOccupancy}</td>
-                                <td className={`px-6 py-4 font-semibold ${room.status === "Vacant" ? "text-green-600" : "text-red-500"}`}>
+                {filteredRooms.map((room) => (
+                    <div
+                        key={room.roomNumber}
+                        className="bg-white rounded-xl shadow p-4 flex flex-col sm:flex-row sm:items-center gap-3"
+                    >
+                        <div className="flex-1">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-lg font-semibold text-gray-800">
+                                    {room.roomNumber}
+                                </h3>
+                                <span
+                                    className={`text-sm font-medium ${room.status === "Vacant"
+                                            ? "text-green-600"
+                                            : "text-red-500"
+                                        }`}
+                                >
                                     {room.status}
-                                </td>
-                                <td className="px-6 py-4 flex gap-3">
-                                    <button className="text-blue-600 hover:text-blue-800 transition">
-                                        <Edit size={20} />
-                                    </button>
-                                    <button className="text-red-600 hover:text-red-800 transition">
-                                        <Trash2 size={20} />
-                                    </button>
-                                </td>
+                                </span>
+                            </div>
+
+                            <p className="text-sm text-gray-600 mt-1">
+                                <span className="font-medium">Hostel:</span>{" "}
+                                {room.hostelName || "—"}
+                            </p>
+                            <p className="text-sm text-gray-600 mt-1">
+                                <span className="font-medium">Capacity:</span>{" "}
+                                {room.capacity} <span className="mx-1">•</span>
+                                <span className="font-medium">Occupied:</span>{" "}
+                                {room.currentOccupancy}
+                            </p>
+                        </div>
+
+                        <div className="flex items-center gap-2 mt-3 sm:mt-0">
+                            <button
+                                className="p-2 rounded-md bg-blue-50 text-blue-600 hover:bg-blue-100"
+                                aria-label="Edit"
+                            >
+                                <Edit size={16} />
+                            </button>
+                            <button
+                                className="p-2 rounded-md bg-red-50 text-red-600 hover:bg-red-100"
+                                aria-label="Delete"
+                            >
+                                <Trash2 size={16} />
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* ===== Desktop: Table ===== */}
+            <div className="hidden md:block mt-2">
+                <div className="overflow-x-auto bg-white rounded-xl shadow-lg">
+                    <table className="min-w-full text-sm text-left border-collapse">
+                        <thead data-aos="fade-up" data-aos-delay="100">
+                            <tr className="bg-pink-100 text-pink-800">
+                                <th className="py-3 px-4">Room No</th>
+                                <th className="py-3 px-4">Hostel</th>
+                                <th className="py-3 px-4">Capacity</th>
+                                <th className="py-3 px-4">Occupied</th>
+                                <th className="py-3 px-4">Status</th>
+                                <th className="py-3 px-4 text-center">Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {filteredRooms.length > 0 ? (
+                                filteredRooms.map((room, idx) => (
+                                    <tr
+                                        data-aos="fade-up"
+                                        data-aos-delay={`${150 + idx * 30}`}
+                                        key={room.roomNumber}
+                                        className="border-b hover:bg-pink-50 transition duration-150"
+                                    >
+                                        <td className="py-3 px-4">{room.roomNumber}</td>
+                                        <td className="py-3 px-4">{room.hostelName}</td>
+                                        <td className="py-3 px-4">{room.capacity}</td>
+                                        <td className="py-3 px-4">{room.currentOccupancy}</td>
+                                        <td
+                                            className={`py-3 px-4 font-semibold ${room.status === "Vacant"
+                                                    ? "text-green-600"
+                                                    : "text-red-500"
+                                                }`}
+                                        >
+                                            {room.status}
+                                        </td>
+                                        <td className="py-3 px-4 flex justify-center gap-3">
+                                            <button className="p-2 rounded-lg bg-blue-100 text-blue-600 hover:bg-blue-200 transition">
+                                                <Edit size={18} />
+                                            </button>
+                                            <button className="p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition">
+                                                <Trash2 size={18} />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td
+                                        colSpan="6"
+                                        className="text-center py-6 text-gray-500 italic"
+                                    >
+                                        No rooms found.
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             {/* Popup Form */}
-            <RoomForm isOpen={isFormOpen} setIsOpen={setIsFormOpen} setRooms={setRooms} />
+            <RoomForm
+                isOpen={isFormOpen}
+                setIsOpen={setIsFormOpen}
+                setRooms={setRooms}
+            />
         </div>
     );
 }

@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { CheckCircle2, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import AllocationTable from "@/components/AllocationTable";
 
 export default function AllocationPage() {
@@ -46,7 +46,6 @@ export default function AllocationPage() {
             return;
         }
 
-        // Assign student
         const updatedRooms = rooms.map((r) =>
             r.roomNumber === room.roomNumber
                 ? {
@@ -61,7 +60,11 @@ export default function AllocationPage() {
         setRooms(updatedRooms);
         setAllocations((prev) => [
             ...prev,
-            { student: student.name, roomNumber: room.roomNumber, hostel: "Boys Hostel A" },
+            {
+                student: student.name,
+                roomNumber: room.roomNumber,
+                hostel: "Boys Hostel A",
+            },
         ]);
         setMessage(`✅ ${student.name} allocated to Room ${room.roomNumber}`);
         setSelectedStudent("");
@@ -69,27 +72,34 @@ export default function AllocationPage() {
     };
 
     return (
-        <div className="p-6 md:p-2 min-h-screen">
+        <div className="p-4 sm:p-6 min-h-screen bg-gray-50">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-                <h1  data-aos="zoom-out"
-                data-aos-delay="100" className="text-3xl font-bold bg-gradient-to-r from-pink-600 to-cyan-500 bg-clip-text text-transparent">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+                <h1
+                    data-aos="zoom-out"
+                    data-aos-delay="100"
+                    className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-pink-600 to-cyan-500 bg-clip-text text-transparent text-center sm:text-left"
+                >
                     Room Allocation
                 </h1>
             </div>
 
             {/* Allocation Form */}
-            <div data-aos="zoom-in"
-                data-aos-delay="200" className="bg-white rounded-xl border-2 border-dashed border-pink-200 p-6 mb-8">
-                <h2 className="text-xl font-semibold mb-4 text-gray-700">
+            <div
+                data-aos="zoom-in"
+                data-aos-delay="200"
+                className="bg-white rounded-xl border-2 border-dashed border-pink-200 p-4 sm:p-6 mb-8 shadow-sm"
+            >
+                <h2 className="text-lg sm:text-xl font-semibold mb-4 text-gray-700 text-center sm:text-left">
                     Allocate a Room
                 </h2>
 
-                <div className="grid md:grid-cols-3 gap-4">
+                {/* Inputs */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <select
                         value={selectedStudent}
                         onChange={(e) => setSelectedStudent(e.target.value)}
-                        className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-pink-400 outline-none"
+                        className="border rounded-lg px-3 py-3 text-base focus:ring-2 focus:ring-pink-400 outline-none w-full"
                     >
                         <option value="">Select Student</option>
                         {students.map((s, i) => (
@@ -102,35 +112,51 @@ export default function AllocationPage() {
                     <select
                         value={selectedRoom}
                         onChange={(e) => setSelectedRoom(e.target.value)}
-                        className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-cyan-400 outline-none"
+                        className="border rounded-lg px-3 py-3 text-base focus:ring-2 focus:ring-cyan-400 outline-none w-full"
                     >
                         <option value="">Select Room</option>
                         {rooms
                             .filter((r) => r.status === "Vacant")
                             .map((r, i) => (
                                 <option key={i} value={r.roomNumber}>
-                                    {r.roomNumber} (Capacity: {r.capacity - r.currentOccupancy} left)
+                                    {r.roomNumber} (Left: {r.capacity - r.currentOccupancy})
                                 </option>
                             ))}
                     </select>
 
                     <button
                         onClick={handleAllocate}
-                        className="flex items-center justify-center gap-2 bg-gradient-to-r from-pink-500 to-cyan-400 text-white font-semibold px-5 py-2 rounded-full shadow-lg hover:opacity-90 transition"
+                        className="flex items-center justify-center gap-2 bg-gradient-to-r from-pink-500 to-cyan-400 text-white font-semibold px-5 py-3 rounded-full shadow-md hover:scale-105 transition w-full"
                     >
-                        <Plus size={20} /> Allocate Room
+                        <Plus size={18} /> Allocate Room
                     </button>
                 </div>
 
+                {/* Message */}
                 {message && (
-                    <p className="mt-4 text-center text-sm font-medium text-gray-700">
+                    <p className="mt-4 text-center text-sm sm:text-base font-medium text-gray-700">
                         {message}
                     </p>
                 )}
             </div>
 
             {/* Allocations Table */}
-            <AllocationTable allocations={allocations} />
+            <div
+                className="
+          relative 
+          overflow-x-auto 
+          overflow-y-hidden 
+          rounded-lg 
+          scrollbar-thin 
+          scrollbar-thumb-gray-300 
+          scrollbar-track-gray-100
+        "
+            >
+                {/* subtle scroll indicator for mobile */}
+                <div className="absolute top-0 right-0 bg-gradient-to-l from-gray-50 w-8 h-full pointer-events-none sm:hidden"></div>
+
+                <AllocationTable allocations={allocations} />
+            </div>
         </div>
     );
 }
