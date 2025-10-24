@@ -4,7 +4,7 @@ import { Plus } from "lucide-react";
 import AllocationTable from "@/components/AllocationTable";
 
 export default function AllocationPage() {
-    const [students, setStudents] = useState([
+    const [students] = useState([
         { name: "Shiva", rollNumber: "21ECE123" },
         { name: "Kiran", rollNumber: "21CSE045" },
         { name: "Priya", rollNumber: "21EEE078" },
@@ -33,9 +33,7 @@ export default function AllocationPage() {
             return;
         }
 
-        const alreadyAssigned = allocations.some(
-            (a) => a.student === selectedStudent
-        );
+        const alreadyAssigned = allocations.some((a) => a.student === selectedStudent);
         if (alreadyAssigned) {
             setMessage("❌ This student is already assigned a room.");
             return;
@@ -51,8 +49,7 @@ export default function AllocationPage() {
                 ? {
                     ...r,
                     currentOccupancy: r.currentOccupancy + 1,
-                    status:
-                        r.currentOccupancy + 1 >= r.capacity ? "Filled" : "Vacant",
+                    status: r.currentOccupancy + 1 >= r.capacity ? "Filled" : "Vacant",
                 }
                 : r
         );
@@ -72,9 +69,9 @@ export default function AllocationPage() {
     };
 
     return (
-        <div className="p-4 sm:p-6 min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50 sm:p-6">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
                 <h1
                     data-aos="zoom-out"
                     data-aos-delay="100"
@@ -94,12 +91,13 @@ export default function AllocationPage() {
                     Allocate a Room
                 </h2>
 
-                {/* Inputs */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {/* Inputs: stacked on mobile, 3-col on sm+ */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <select
                         value={selectedStudent}
                         onChange={(e) => setSelectedStudent(e.target.value)}
-                        className="border rounded-lg px-3 py-3 text-base focus:ring-2 focus:ring-pink-400 outline-none w-full"
+                        className="w-full rounded-lg border px-3 py-3 text-base outline-none focus:ring-2 focus:ring-pink-400 bg-white"
+                        aria-label="Select Student"
                     >
                         <option value="">Select Student</option>
                         {students.map((s, i) => (
@@ -112,7 +110,8 @@ export default function AllocationPage() {
                     <select
                         value={selectedRoom}
                         onChange={(e) => setSelectedRoom(e.target.value)}
-                        className="border rounded-lg px-3 py-3 text-base focus:ring-2 focus:ring-cyan-400 outline-none w-full"
+                        className="w-full rounded-lg border px-3 py-3 text-base outline-none focus:ring-2 focus:ring-cyan-400 bg-white"
+                        aria-label="Select Room"
                     >
                         <option value="">Select Room</option>
                         {rooms
@@ -126,7 +125,8 @@ export default function AllocationPage() {
 
                     <button
                         onClick={handleAllocate}
-                        className="flex items-center justify-center gap-2 bg-gradient-to-r from-pink-500 to-cyan-400 text-white font-semibold px-5 py-3 rounded-full shadow-md hover:scale-105 transition w-full"
+                        className="w-full inline-flex items-center justify-center gap-2 rounded-full px-4 py-3 bg-gradient-to-r from-pink-500 to-cyan-400 text-white font-semibold shadow-md hover:scale-105 transition text-sm sm:text-base"
+                        aria-label="Allocate Room"
                     >
                         <Plus size={18} /> Allocate Room
                     </button>
@@ -140,23 +140,8 @@ export default function AllocationPage() {
                 )}
             </div>
 
-            {/* Allocations Table */}
-            <div
-                className="
-          relative 
-          overflow-x-auto 
-          overflow-y-hidden 
-          rounded-lg 
-          scrollbar-thin 
-          scrollbar-thumb-gray-300 
-          scrollbar-track-gray-100
-        "
-            >
-                {/* subtle scroll indicator for mobile */}
-                <div className="absolute top-0 right-0 bg-gradient-to-l from-gray-50 w-8 h-full pointer-events-none sm:hidden"></div>
-
-                <AllocationTable allocations={allocations} />
-            </div>
+            {/* Allocations (component handles responsive rendering internally) */}
+            <AllocationTable allocations={allocations} />
         </div>
     );
 }
