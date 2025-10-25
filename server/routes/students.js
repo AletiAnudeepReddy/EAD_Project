@@ -71,12 +71,15 @@ router.delete("/:id", async (req, res) => {
       }
     }
 
-    await student.remove();
-    return res.json({ message: "Student deleted" });
+    // ✅ Mongoose 7 compatible delete
+    await Student.findByIdAndDelete(req.params.id);
+
+    return res.json({ message: "Student deleted successfully" });
   } catch (err) {
-    console.error(err);
+    console.error("❌ Delete student error:", err);
     return res.status(500).json({ message: "Server error" });
   }
 });
+
 
 export default router;
