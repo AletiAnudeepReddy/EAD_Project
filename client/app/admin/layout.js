@@ -66,7 +66,7 @@ export default function AdminLayout({ children }) {
             <aside
                 className={`hidden md:flex flex-col justify-between fixed h-screen transition-all duration-300 z-30
           ${isSidebarOpen ? "w-64" : "w-20"}
-          bg-white/80 backdrop-blur-md border-r border-pink-200 shadow-xl`}
+          bg-gradient-to-b from-pink-600/30 to-cyan-400/30 backdrop-blur-md border-r border-pink-200 shadow-xl`}
             >
                 <div>
                     {/* Logo + toggle */}
@@ -74,7 +74,7 @@ export default function AdminLayout({ children }) {
                         <Link href="/admin/dashboard" className="flex items-center gap-2">
                             <Home className="text-pink-600 w-7 h-7" />
                             {isSidebarOpen && (
-                                <span className="text-xl font-bold text-pink-600">HostelHub</span>
+                                <span className="text-2xl font-bold bg-gradient-to-r from-pink-700 to-cyan-600 bg-clip-text text-transparent">HostelHub</span>
                             )}
                         </Link>
 
@@ -99,7 +99,7 @@ export default function AdminLayout({ children }) {
                                     className={`flex items-center gap-3 px-4 py-3 font-medium rounded-xl transition-all
                     ${active
                                             ? "bg-gradient-to-r from-pink-500 to-cyan-400 text-white shadow-md"
-                                            : "text-gray-700 hover:bg-gradient-to-r hover:from-pink-100 hover:to-cyan-100 hover:text-pink-600"
+                                            : "text-gray-700 hover:bg-gradient-to-l hover:from-pink-500 hover:to-cyan-400 hover:text-white hover:opacity"
                                         }`}
                                 >
                                     <Icon className="w-5 h-5" />
