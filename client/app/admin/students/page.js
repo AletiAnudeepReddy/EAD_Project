@@ -1,33 +1,34 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Plus, Edit, Trash2, Search } from "lucide-react";
 import StudentForm from "@/components/StudentForm";
 
 export default function StudentsPage() {
-    const [students, setStudents] = useState([
-        {
-            name: "Shiva",
-            rollNumber: "21ECE123",
-            department: "ECE",
-            gender: "Male",
-            roomId: "A-101",
-            contact: "9876543210",
-        },
-        {
-            name: "Priya",
-            rollNumber: "21CSE087",
-            department: "CSE",
-            gender: "Female",
-            roomId: "B-202",
-            contact: "9876501234",
-        },
-    ]);
-
+    const [students, setStudents] = useState([]);
     const [search, setSearch] = useState("");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editStudent, setEditStudent] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    // Filtered data (search across name, roll, dept, room)
+    const API_BASE = "http://localhost:5000/api/students";
+
+    // ✅ Fetch all students on page load
+    useEffect(() => {
+        const fetchStudents = async () => {
+            try {
+                const res = await fetch(API_BASE);
+                const data = await res.json();
+                setStudents(data || []);
+            } catch (err) {
+                console.error("Failed to fetch students:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchStudents();
+    }, []);
+
+    // ✅ Search filter
     const filteredStudents = students.filter((s) => {
         const q = search.trim().toLowerCase();
         if (!q) return true;
@@ -39,29 +40,65 @@ export default function StudentsPage() {
         );
     });
 
-    // Add or Update
-    const handleSave = (data) => {
-        if (editStudent) {
-            setStudents(
-                students.map((s) =>
-                    s.rollNumber === editStudent.rollNumber ? data : s
-                )
-            );
-            setEditStudent(null);
-        } else {
-            setStudents([data, ...students]); // newest first
+    // ✅ Add or Update student (API integrated)
+    const handleSave = async (data) => {
+        try {
+            if (editStudent) {
+                // update
+                const res = await fetch(`${API_BASE}/${editStudent._id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data),
+                });
+                if (!res.ok) throw new Error("Update failed");
+                const updated = await res.json();
+                setStudents((prev) =>
+                    prev.map((s) => (s._id === updated._id ? updated : s))
+                );
+                setEditStudent(null);
+            } else {
+                // add new
+                const res = await fetch(API_BASE, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data),
+                });
+                if (!res.ok) throw new Error("Create failed");
+                const newStudent = await res.json();
+                setStudents((prev) => [newStudent, ...prev]);
+            }
+        } catch (err) {
+            console.error("Save error:", err);
+            alert("Failed to save student. Check console for details.");
+        } finally {
+            setIsModalOpen(false);
         }
-        setIsModalOpen(false);
     };
 
-    // Delete
-    const handleDelete = (rollNumber) => {
+    // ✅ Delete student (API integrated)
+    const handleDelete = async (id) => {
         if (!confirm("Delete this student?")) return;
-        setStudents(students.filter((s) => s.rollNumber !== rollNumber));
+        try {
+            const res = await fetch(`${API_BASE}/${id}`, { method: "DELETE" });
+            if (!res.ok) throw new Error("Delete failed");
+            setStudents((prev) => prev.filter((s) => s._id !== id));
+        } catch (err) {
+            console.error("Delete error:", err);
+            alert("Failed to delete student.");
+        }
     };
+
+    // ✅ Loading state
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center min-h-screen text-gray-600">
+                Loading students...
+            </div>
+        );
+    }
 
     return (
-        <div className=" md:p-6 min-h-screen bg-gray-50">
+        <div className="md:p-6 min-h-screen bg-gray-50">
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
                 <h1
@@ -72,13 +109,10 @@ export default function StudentsPage() {
                     Manage Students
                 </h1>
 
-                {/* Search + Add (stacks on mobile) */}
+                {/* Search + Add */}
                 <div className="w-full md:w-auto flex flex-col sm:flex-row items-stretch gap-3">
                     <div className="relative flex-1">
-                        <Search
-                            className="absolute left-3 top-3 text-gray-400"
-                            size={18}
-                        />
+                        <Search className="absolute left-3 top-3 text-gray-400" size={18} />
                         <input
                             type="text"
                             placeholder="Search student by name, roll, dept or room..."
@@ -100,33 +134,46 @@ export default function StudentsPage() {
                 </div>
             </div>
 
-            {/* ===== Mobile: Card List (shown on small screens) ===== */}
+            {/* Mobile: Card List */}
+            {/* Mobile: Card List */}
             <div className="space-y-4 md:hidden">
                 {filteredStudents.length === 0 && (
-                    <div className="text-center text-gray-500 py-8">No students found.</div>
+                    <div className="text-center text-gray-500 py-8">
+                        No students found.
+                    </div>
                 )}
 
                 {filteredStudents.map((student) => (
                     <div
-                        key={student.rollNumber}
+                        key={student._id}
                         className="bg-white rounded-xl shadow p-4 flex flex-col sm:flex-row sm:items-center gap-3"
                     >
                         <div className="flex-1">
                             <div className="flex items-center justify-between">
-                                <h3 className="text-lg font-semibold text-gray-800">{student.name}</h3>
-                                <span className="text-sm text-gray-500">{student.rollNumber}</span>
+                                <h3 className="text-lg font-semibold text-gray-800">
+                                    {student.name}
+                                </h3>
+                                <span className="text-sm text-gray-500">
+                                    {student.rollNumber}
+                                </span>
                             </div>
 
                             <p className="text-sm text-gray-600 mt-1">
-                                <span className="font-medium">Dept:</span> {student.department || "—"}
+                                <span className="font-medium">Dept:</span>{" "}
+                                {student.department || "—"}
                                 <span className="mx-2">•</span>
-                                <span className="font-medium">Room:</span> {student.roomId || "—"}
+                                <span className="font-medium">Room:</span>{" "}
+                                {student.roomId
+                                    ? `${student.roomId.roomNumber} (${student.roomId.hostelName})`
+                                    : "—"}
                             </p>
 
                             <p className="text-sm text-gray-600 mt-2">
-                                <span className="font-medium">Gender:</span> {student.gender || "—"}
+                                <span className="font-medium">Gender:</span>{" "}
+                                {student.gender || "—"}
                                 <span className="mx-2">•</span>
-                                <span className="font-medium">Contact:</span> {student.contact || "—"}
+                                <span className="font-medium">Contact:</span>{" "}
+                                {student.contact || "—"}
                             </p>
                         </div>
 
@@ -142,7 +189,7 @@ export default function StudentsPage() {
                                 <Edit size={16} />
                             </button>
                             <button
-                                onClick={() => handleDelete(student.rollNumber)}
+                                onClick={() => handleDelete(student._id)}
                                 className="p-2 rounded-md bg-red-50 text-red-600 hover:bg-red-100"
                                 aria-label="Delete"
                             >
@@ -153,7 +200,7 @@ export default function StudentsPage() {
                 ))}
             </div>
 
-            {/* ===== Desktop: Table (md and up) - unchanged layout visually ===== */}
+            {/* Desktop: Table */}
             <div className="hidden md:block mt-2">
                 <div className="overflow-x-auto bg-white rounded-xl shadow-lg">
                     <table className="min-w-full text-sm text-left border-collapse">
@@ -174,14 +221,18 @@ export default function StudentsPage() {
                                     <tr
                                         data-aos="fade-up"
                                         data-aos-delay={`${150 + idx * 30}`}
-                                        key={student.rollNumber}
+                                        key={student._id}
                                         className="border-b hover:bg-pink-50 transition duration-150"
                                     >
                                         <td className="py-3 px-4">{student.name}</td>
                                         <td className="py-3 px-4">{student.rollNumber}</td>
                                         <td className="py-3 px-4">{student.department}</td>
                                         <td className="py-3 px-4">{student.gender}</td>
-                                        <td className="py-3 px-4">{student.roomId}</td>
+                                        <td className="py-3 px-4">
+                                            {student.roomId
+                                                ? `${student.roomId.roomNumber} (${student.roomId.hostelName})`
+                                                : "—"}
+                                        </td>
                                         <td className="py-3 px-4">{student.contact}</td>
                                         <td className="py-3 px-4 flex justify-center gap-3">
                                             <button
@@ -194,7 +245,7 @@ export default function StudentsPage() {
                                                 <Edit size={18} />
                                             </button>
                                             <button
-                                                onClick={() => handleDelete(student.rollNumber)}
+                                                onClick={() => handleDelete(student._id)}
                                                 className="p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition"
                                             >
                                                 <Trash2 size={18} />
@@ -204,7 +255,10 @@ export default function StudentsPage() {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="7" className="text-center py-6 text-gray-500 italic">
+                                    <td
+                                        colSpan="7"
+                                        className="text-center py-6 text-gray-500 italic"
+                                    >
                                         No students found.
                                     </td>
                                 </tr>
@@ -213,6 +267,7 @@ export default function StudentsPage() {
                     </table>
                 </div>
             </div>
+
 
             {/* Add/Edit Modal */}
             {isModalOpen && (

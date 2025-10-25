@@ -185,7 +185,7 @@ export default function AdminLayout({ children }) {
             // We keep content full-width on mobile; desktop styles above keep a fixed sidebar.
             >
                 {/* ---------- TOP BAR ---------- */}
-                <header className="sticky top-0 ml-0 md:ml-64 z-20 bg-white/70 backdrop-blur-md border-b border-pink-200 p-3 flex items-center justify-between">
+                <header className="sticky top-0 ml-0 md:ml-64 z-20 bg-gradient-to-r from-pink-600/30 to-cyan-400/30 backdrop-blur-md border-b border-pink-200 p-3 md:p-3 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         {/* Mobile: show small menu button top-left to open slide-over */}
                         <button
@@ -197,7 +197,7 @@ export default function AdminLayout({ children }) {
                         </button>
 
                         {/* Title */}
-                        <h1 className="text-xl font-bold text-pink-600">Admin Panel</h1>
+                        <h1 className="text-2xl ml-6 font-bold bg-gradient-to-r from-pink-700 to-cyan-600 bg-clip-text text-transparent">Admin Panel</h1>
                     </div>
 
                     <div className="flex items-center gap-3">

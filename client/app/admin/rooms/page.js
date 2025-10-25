@@ -102,8 +102,8 @@ export default function RoomsPage() {
                                 </h3>
                                 <span
                                     className={`text-sm font-medium ${room.status === "Vacant"
-                                            ? "text-green-600"
-                                            : "text-red-500"
+                                        ? "text-green-600"
+                                        : "text-red-500"
                                         }`}
                                 >
                                     {room.status}
@@ -169,8 +169,8 @@ export default function RoomsPage() {
                                         <td className="py-3 px-4">{room.currentOccupancy}</td>
                                         <td
                                             className={`py-3 px-4 font-semibold ${room.status === "Vacant"
-                                                    ? "text-green-600"
-                                                    : "text-red-500"
+                                                ? "text-green-600"
+                                                : "text-red-500"
                                                 }`}
                                         >
                                             {room.status}
