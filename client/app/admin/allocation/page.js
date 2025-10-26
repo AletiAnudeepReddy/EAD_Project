@@ -1,71 +1,84 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus } from "lucide-react";
 import AllocationTable from "@/components/AllocationTable";
 
+const API_BASE = "http://localhost:5000/api";
+
 export default function AllocationPage() {
-    const [students] = useState([
-        { name: "Shiva", rollNumber: "21ECE123" },
-        { name: "Kiran", rollNumber: "21CSE045" },
-        { name: "Priya", rollNumber: "21EEE078" },
-    ]);
-
-    const [rooms, setRooms] = useState([
-        { roomNumber: "A101", capacity: 2, currentOccupancy: 1, status: "Vacant" },
-        { roomNumber: "B202", capacity: 1, currentOccupancy: 0, status: "Vacant" },
-        { roomNumber: "C303", capacity: 2, currentOccupancy: 2, status: "Filled" },
-    ]);
-
-    const [allocations, setAllocations] = useState([
-        { student: "Shiva", roomNumber: "A101", hostel: "Boys Hostel A" },
-    ]);
+    const [students, setStudents] = useState([]);
+    const [rooms, setRooms] = useState([]);
+    const [allocations, setAllocations] = useState([]);
 
     const [selectedStudent, setSelectedStudent] = useState("");
     const [selectedRoom, setSelectedRoom] = useState("");
     const [message, setMessage] = useState("");
 
-    const handleAllocate = () => {
-        const student = students.find((s) => s.name === selectedStudent);
-        const room = rooms.find((r) => r.roomNumber === selectedRoom);
+    // ✅ Fetch data from backend
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [studentsRes, roomsRes, allocRes] = await Promise.all([
+                    fetch(`${API_BASE}/students`),
+                    fetch(`${API_BASE}/rooms`),
+                    fetch(`${API_BASE}/allocations`),
+                ]);
 
-        if (!student || !room) {
+                const [studentsData, roomsData, allocData] = await Promise.all([
+                    studentsRes.json(),
+                    roomsRes.json(),
+                    allocRes.json(),
+                ]);
+
+                setStudents(studentsData);
+                setRooms(roomsData);
+                setAllocations(allocData);
+            } catch (err) {
+                console.error("Error loading data:", err);
+                setMessage("⚠️ Failed to load data from server.");
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    // ✅ Handle allocation (calls backend)
+    const handleAllocate = async () => {
+        if (!selectedStudent || !selectedRoom) {
             setMessage("Please select both student and room!");
             return;
         }
 
-        const alreadyAssigned = allocations.some((a) => a.student === selectedStudent);
-        if (alreadyAssigned) {
-            setMessage("❌ This student is already assigned a room.");
-            return;
+        try {
+            const res = await fetch(`${API_BASE}/allocations/allocate`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    studentId: selectedStudent,
+                    roomId: selectedRoom,
+                }),
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.message || "Allocation failed");
+
+            setMessage(`✅ ${data.message}`);
+
+            // Refresh allocations + rooms
+            const [newAllocRes, newRoomsRes] = await Promise.all([
+                fetch(`${API_BASE}/allocations`),
+                fetch(`${API_BASE}/rooms`),
+            ]);
+
+            setAllocations(await newAllocRes.json());
+            setRooms(await newRoomsRes.json());
+
+            setSelectedStudent("");
+            setSelectedRoom("");
+        } catch (err) {
+            console.error("Allocation error:", err);
+            setMessage(`❌ ${err.message}`);
         }
-
-        if (room.status === "Filled") {
-            setMessage("⚠️ This room is already full.");
-            return;
-        }
-
-        const updatedRooms = rooms.map((r) =>
-            r.roomNumber === room.roomNumber
-                ? {
-                    ...r,
-                    currentOccupancy: r.currentOccupancy + 1,
-                    status: r.currentOccupancy + 1 >= r.capacity ? "Filled" : "Vacant",
-                }
-                : r
-        );
-
-        setRooms(updatedRooms);
-        setAllocations((prev) => [
-            ...prev,
-            {
-                student: student.name,
-                roomNumber: room.roomNumber,
-                hostel: "Boys Hostel A",
-            },
-        ]);
-        setMessage(`✅ ${student.name} allocated to Room ${room.roomNumber}`);
-        setSelectedStudent("");
-        setSelectedRoom("");
     };
 
     return (
@@ -91,17 +104,16 @@ export default function AllocationPage() {
                     Allocate a Room
                 </h2>
 
-                {/* Inputs: stacked on mobile, 3-col on sm+ */}
+                {/* Inputs */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <select
                         value={selectedStudent}
                         onChange={(e) => setSelectedStudent(e.target.value)}
                         className="w-full rounded-lg border px-3 py-3 text-base outline-none focus:ring-2 focus:ring-pink-400 bg-white"
-                        aria-label="Select Student"
                     >
                         <option value="">Select Student</option>
-                        {students.map((s, i) => (
-                            <option key={i} value={s.name}>
+                        {students.map((s) => (
+                            <option key={s._id} value={s._id}>
                                 {s.name} ({s.rollNumber})
                             </option>
                         ))}
@@ -111,14 +123,13 @@ export default function AllocationPage() {
                         value={selectedRoom}
                         onChange={(e) => setSelectedRoom(e.target.value)}
                         className="w-full rounded-lg border px-3 py-3 text-base outline-none focus:ring-2 focus:ring-cyan-400 bg-white"
-                        aria-label="Select Room"
                     >
                         <option value="">Select Room</option>
                         {rooms
                             .filter((r) => r.status === "Vacant")
-                            .map((r, i) => (
-                                <option key={i} value={r.roomNumber}>
-                                    {r.roomNumber} (Left: {r.capacity - r.currentOccupancy})
+                            .map((r) => (
+                                <option key={r._id} value={r._id}>
+                                    {r.roomNumber} ({r.capacity - r.currentOccupancy} left)
                                 </option>
                             ))}
                     </select>
@@ -126,13 +137,11 @@ export default function AllocationPage() {
                     <button
                         onClick={handleAllocate}
                         className="w-full inline-flex items-center justify-center gap-2 rounded-full px-4 py-3 bg-gradient-to-r from-pink-500 to-cyan-400 text-white font-semibold shadow-md hover:scale-105 transition text-sm sm:text-base"
-                        aria-label="Allocate Room"
                     >
                         <Plus size={18} /> Allocate Room
                     </button>
                 </div>
 
-                {/* Message */}
                 {message && (
                     <p className="mt-4 text-center text-sm sm:text-base font-medium text-gray-700">
                         {message}
@@ -140,7 +149,7 @@ export default function AllocationPage() {
                 )}
             </div>
 
-            {/* Allocations (component handles responsive rendering internally) */}
+            {/* Allocation Table */}
             <AllocationTable allocations={allocations} />
         </div>
     );

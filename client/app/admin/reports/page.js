@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { FileDown, BarChart3, PieChart } from "lucide-react";
-import * as XLSX from "xlsx";
 import {
     BarChart as ReBarChart,
     Bar,
@@ -47,26 +46,37 @@ export default function ReportsPage() {
         { department: "CSE", students: 1 },
     ];
 
-    // Excel Download
-    const handleDownloadReport = (type) => {
-        let data = [];
-        let fileName = "";
+    // ======= NEW FUNCTION: Download Report from Backend =======
+    const handleDownloadReport = async (type) => {
+        try {
+            const endpoint = `http://localhost:5000/api/reports/${type}`;
+            const response = await fetch(endpoint);
 
-        if (type === "students") {
-            data = students;
-            fileName = "Students_Report.xlsx";
-        } else if (type === "rooms") {
-            data = rooms;
-            fileName = "Rooms_Report.xlsx";
-        } else if (type === "allocations") {
-            data = allocations;
-            fileName = "Allocations_Report.xlsx";
+            if (!response.ok) {
+                throw new Error("Failed to generate report");
+            }
+
+            // Convert to Blob
+            const blob = await response.blob();
+
+            // Create a temporary download link
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download =
+                type === "students"
+                    ? "Students_Report.xlsx"
+                    : type === "rooms"
+                        ? "Rooms_Report.xlsx"
+                        : "Allocations_Report.xlsx";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error(err);
+            alert("Error downloading report. Please try again.");
         }
-
-        const worksheet = XLSX.utils.json_to_sheet(data);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Report");
-        XLSX.writeFile(workbook, fileName);
     };
 
     return (
