@@ -71,10 +71,11 @@ export default function AdminLayout({ children }) {
                 <div>
                     {/* Logo + toggle */}
                     <div className="flex items-center justify-between p-5 border-b border-pink-100">
-                        <Link href="/admin/dashboard" className="flex items-center gap-2">
-                            <Home className="text-pink-600 w-7 h-7" />
+                        <Link href="/" className="flex items-center gap-2">
+                            <Home className="text-pink-700 font-extrabold w-7 h-7" />
                             {isSidebarOpen && (
-                                <span className="text-2xl font-bold bg-gradient-to-r from-pink-700 to-cyan-600 bg-clip-text text-transparent">HostelHub</span>
+                                <span className="text-2xl font-extrabold bg-gradient-to-r from-pink-700 to-cyan-600 bg-clip-text text-transparent"
+                                >HostelHub</span>
                             )}
                         </Link>
 
@@ -203,7 +204,7 @@ export default function AdminLayout({ children }) {
                     <div className="flex items-center gap-3">
                         <p className="text-gray-600 text-sm hidden sm:block">
                             Welcome back,
-                            <span className="ml-2 font-semibold bg-gradient-to-r from-pink-600 to-cyan-400 bg-clip-text text-transparent">
+                            <span className="ml-2 font-bold text-lg bg-gradient-to-r from-pink-700 to-cyan-500 bg-clip-text text-transparent">
                                 {session?.user?.name ?? "Anudeep"}
                             </span>
                         </p>

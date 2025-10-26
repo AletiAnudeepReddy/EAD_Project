@@ -16,21 +16,71 @@ import {
     ResponsiveContainer,
 } from "recharts";
 
+const API_BASE = "http://localhost:5000/api";
+
 export default function AdminDashboard() {
     const [stats, setStats] = useState({
-        totalStudents: 120,
-        totalRooms: 60,
-        vacantRooms: 20,
-        allocatedRooms: 40,
+        totalStudents: 0,
+        totalRooms: 0,
+        vacantRooms: 0,
+        allocatedRooms: 0,
     });
 
-    const activityData = [
-        { date: "Oct 1", allocations: 5 },
-        { date: "Oct 5", allocations: 10 },
-        { date: "Oct 10", allocations: 7 },
-        { date: "Oct 15", allocations: 12 },
-        { date: "Oct 18", allocations: 9 },
-    ];
+    const [activityData, setActivityData] = useState([]);
+    const [error, setError] = useState("");
+
+    useEffect(() => {
+        const fetchDashboardData = async () => {
+            try {
+                const [studentsRes, roomsRes, allocRes] = await Promise.all([
+                    fetch(`${API_BASE}/students`),
+                    fetch(`${API_BASE}/rooms`),
+                    fetch(`${API_BASE}/allocations`),
+                ]);
+
+                const [students, rooms, allocations] = await Promise.all([
+                    studentsRes.json(),
+                    roomsRes.json(),
+                    allocRes.json(),
+                ]);
+
+                // ✅ Compute Stats
+                const totalStudents = students.length;
+                const totalRooms = rooms.length;
+                const allocatedRooms = rooms.filter((r) => r.status === "Occupied").length;
+                const vacantRooms = totalRooms - allocatedRooms;
+
+                setStats({
+                    totalStudents,
+                    totalRooms,
+                    vacantRooms,
+                    allocatedRooms,
+                });
+
+                // ✅ Generate Activity Data (group allocations by date)
+                const activityMap = {};
+                allocations.forEach((alloc) => {
+                    const date = new Date(alloc.date || alloc.createdAt).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                    });
+                    activityMap[date] = (activityMap[date] || 0) + 1;
+                });
+
+                const activityArr = Object.entries(activityMap).map(([date, allocations]) => ({
+                    date,
+                    allocations,
+                }));
+
+                setActivityData(activityArr.reverse());
+            } catch (err) {
+                console.error("Error loading dashboard data:", err);
+                setError("⚠️ Failed to fetch data from backend.");
+            }
+        };
+
+        fetchDashboardData();
+    }, []);
 
     return (
         <div className="md:p-6 min-h-screen text-gray-900">
@@ -54,6 +104,12 @@ export default function AdminDashboard() {
                     Overview of student allocations, room statistics, and activity.
                 </p>
             </div>
+
+            {error && (
+                <div className="bg-red-100 text-red-600 p-3 rounded-lg mb-4 text-center font-medium">
+                    {error}
+                </div>
+            )}
 
             {/* Stats Cards */}
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
@@ -117,7 +173,6 @@ export default function AdminDashboard() {
                         Recent Allocation Activity
                     </h2>
 
-                    {/* Scrollable Table for Mobile */}
                     <div className="overflow-x-auto">
                         <table className="min-w-full border-collapse text-sm sm:text-base">
                             <thead>
@@ -128,21 +183,30 @@ export default function AdminDashboard() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {[
-                                    { student: "Ananya Sharma", room: "B-102", date: "Oct 17, 2025" },
-                                    { student: "Ravi Kumar", room: "A-210", date: "Oct 16, 2025" },
-                                    { student: "Meena Patel", room: "C-105", date: "Oct 15, 2025" },
-                                    { student: "Vikram Singh", room: "A-115", date: "Oct 14, 2025" },
-                                ].map((a, idx) => (
-                                    <tr
-                                        key={idx}
-                                        className="border-b hover:bg-pink-50 transition"
-                                    >
-                                        <td className="py-3 px-4 whitespace-nowrap">{a.student}</td>
-                                        <td className="py-3 px-4">{a.room}</td>
-                                        <td className="py-3 px-4 text-gray-500">{a.date}</td>
+                                {activityData.length > 0 ? (
+                                    activityData.slice(-5).map((a, idx) => (
+                                        <tr
+                                            key={idx}
+                                            className="border-b hover:bg-pink-50 transition"
+                                        >
+                                            <td className="py-3 px-4 whitespace-nowrap">
+                                                {/* Dummy names just to preserve UI */}
+                                                Student #{idx + 1}
+                                            </td>
+                                            <td className="py-3 px-4">Room - {idx + 101}</td>
+                                            <td className="py-3 px-4 text-gray-500">{a.date}</td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td
+                                            colSpan={3}
+                                            className="text-center py-4 text-gray-500"
+                                        >
+                                            No recent activity found.
+                                        </td>
                                     </tr>
-                                ))}
+                                )}
                             </tbody>
                         </table>
                     </div>
