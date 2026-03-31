@@ -1,0 +1,21 @@
+{
+  "pages": {
+    "/admin/students/page": [
+      "static/chunks/ff1a16fafef87110.js",
+      "static/chunks/6a7993b07cb97bb3.js",
+      "static/chunks/37bb59d8be3e959b.css",
+      "static/chunks/78fe560024bc27e8.css",
+      "static/chunks/9f1e17530f34d0fe.css",
+      "static/chunks/e867960934cec2ae.js",
+      "static/chunks/744ec64be1951c4c.js",
+      "static/chunks/43d791c859691eea.js",
+      "static/chunks/b0bbd587cd81b1eb.js",
+      "static/chunks/6f9284b9401b09ee.js",
+      "static/chunks/5d42197f764f004e.js",
+      "static/chunks/6ec1b18a4264a945.js",
+      "static/chunks/2468949c4832742b.js",
+      "static/chunks/ad485e1ef0aa584e.js",
+      "static/chunks/turbopack-a6ca1070c5cfc902.js"
+    ]
+  }
+}
